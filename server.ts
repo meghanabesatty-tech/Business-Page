@@ -52,6 +52,120 @@ function isRealSecret(val: string | undefined, placeholderPrefix: string): boole
   return true;
 }
 
+const DEFAULT_N8N_WEBHOOK_URL =
+  'https://megu2006.app.n8n.cloud/webhook/129e795d-0ca2-469b-91c8-2c9e0194c556/chat';
+
+function extractN8nReply(rawText: string): string {
+  const trimmed = rawText.trim();
+  if (!trimmed) return '';
+
+  // 1. Try parsing as standard JSON object or array
+  try {
+    const parsed = JSON.parse(trimmed);
+    if (typeof parsed === 'string') return parsed;
+    if (Array.isArray(parsed) && parsed.length > 0) {
+      const first = parsed[0];
+      if (typeof first === 'string') return first;
+      if (first && typeof first === 'object') {
+        const candidate =
+          first.output ?? first.text ?? first.response ?? first.message ?? first.content;
+        if (typeof candidate === 'string') return candidate;
+      }
+    }
+    if (parsed && typeof parsed === 'object') {
+      const candidate =
+        parsed.output ??
+        parsed.text ??
+        parsed.response ??
+        parsed.message ??
+        parsed.reply ??
+        parsed.content;
+      if (typeof candidate === 'string') return candidate;
+    }
+  } catch {
+    // 2. If n8n streaming mode is enabled, it returns newline-delimited JSON objects (NDJSON)
+    const lines = trimmed.split('\n');
+    let streamBuffer = '';
+    for (const line of lines) {
+      const cleanLine = line.trim();
+      if (!cleanLine) continue;
+      try {
+        const chunk = JSON.parse(cleanLine) as {
+          type?: string;
+          content?: string;
+          output?: string;
+          text?: string;
+        };
+        if (chunk.type === 'item' && typeof chunk.content === 'string') {
+          streamBuffer += chunk.content;
+        } else if (typeof chunk.output === 'string') {
+          streamBuffer += chunk.output;
+        } else if (typeof chunk.text === 'string') {
+          streamBuffer += chunk.text;
+        }
+      } catch {
+        // Ignore non-JSON line
+      }
+    }
+    if (streamBuffer.trim()) return streamBuffer.trim();
+  }
+
+  return trimmed;
+}
+
+// n8n Chatbot Webhook Proxy Endpoint
+app.post('/api/n8n-chat', async (req: Request, res: Response) => {
+  try {
+    const webhookUrl = process.env.N8N_CHAT_WEBHOOK_URL?.trim() || DEFAULT_N8N_WEBHOOK_URL;
+    const { chatInput, sessionId } = req.body;
+
+    if (typeof chatInput !== 'string' || !chatInput.trim()) {
+      return res.status(400).json({ error: 'EMPTY_MESSAGE', message: 'Message cannot be empty.' });
+    }
+
+    const safeInput = chatInput.trim().slice(0, 1500);
+    const safeSessionId =
+      typeof sessionId === 'string' && sessionId.trim()
+        ? sessionId.trim().slice(0, 100)
+        : `mdart_session_${Date.now()}`;
+
+    const response = await fetch(`${webhookUrl}?action=sendMessage`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Accept: 'application/json, text/plain, */*',
+      },
+      body: JSON.stringify({
+        action: 'sendMessage',
+        sessionId: safeSessionId,
+        chatInput: safeInput,
+      }),
+    });
+
+    const rawText = await response.text();
+    if (!response.ok) {
+      return res.status(response.status || 502).json({
+        error: 'N8N_WEBHOOK_ERROR',
+        message: 'The n8n chat workflow is currently unavailable or inactive.',
+        details: rawText.slice(0, 300),
+      });
+    }
+
+    const reply = extractN8nReply(rawText);
+    return res.json({
+      reply:
+        reply ||
+        'Thank you for messaging MD ART STUDIO! How can I help you with our handmade pieces today?',
+    });
+  } catch (err) {
+    console.error('n8n chat proxy error:', err);
+    return res.status(500).json({
+      error: 'N8N_CONNECTION_FAILED',
+      message: 'Failed to connect to the n8n chatbot webhook.',
+    });
+  }
+});
+
 // Public payment & studio configuration endpoint (NEVER exposes secrets)
 app.get('/api/payment-config', (_req: Request, res: Response) => {
   const razorpayKeyId = process.env.RAZORPAY_KEY_ID?.trim() || '';
