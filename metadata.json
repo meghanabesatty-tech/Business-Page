@@ -1,0 +1,6 @@
+{
+  "name": "MD ART STUDIO – Handmade Custom Art & Personalized Gifts",
+  "description": "Shop handcrafted custom t-shirt paintings, handkerchief art, floral embroidery, canvas paintings, 3D texture art, and customized UNO cards by MD ART STUDIO (@md_art_studio0608).",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}

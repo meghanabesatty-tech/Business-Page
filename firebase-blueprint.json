@@ -1,0 +1,960 @@
+{
+  "entities": {
+    "AdminRecord": {
+      "title": "AdminRecord",
+      "description": "Trusted administrator membership record",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "email": {
+          "type": "string",
+          "format": "email",
+          "minLength": 3,
+          "maxLength": 254
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["uid", "email", "createdAt"]
+    },
+    "UserProfile": {
+      "title": "UserProfile",
+      "description": "Public-safe user profile without PII",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "displayName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "role": {
+          "type": "string",
+          "enum": ["customer", "admin"],
+          "minLength": 1,
+          "maxLength": 20
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["uid", "displayName", "role", "createdAt", "updatedAt"]
+    },
+    "UserPrivateInfo": {
+      "title": "UserPrivateInfo",
+      "description": "Isolated PII document for user contact details",
+      "type": "object",
+      "properties": {
+        "uid": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "email": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 254
+        },
+        "phone": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 25
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["uid", "email", "phone", "createdAt", "updatedAt"]
+    },
+    "Category": {
+      "title": "Category",
+      "description": "Product category in MD ART STUDIO catalog",
+      "type": "object",
+      "properties": {
+        "slug": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "startingPrice": {
+          "type": "number"
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 600
+        },
+        "imageUrl": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1500
+        },
+        "sortOrder": {
+          "type": "number"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["slug", "name", "startingPrice", "description", "imageUrl", "sortOrder", "createdAt", "updatedAt"]
+    },
+    "Product": {
+      "title": "Product",
+      "description": "Handmade artwork product listing",
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 150
+        },
+        "slug": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 150
+        },
+        "categoryId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "categoryName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "price": {
+          "type": "number"
+        },
+        "compareAtPrice": {
+          "type": "number"
+        },
+        "description": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2500
+        },
+        "materials": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 500
+        },
+        "size": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "stock": {
+          "type": "number"
+        },
+        "inStock": {
+          "type": "boolean"
+        },
+        "customizable": {
+          "type": "boolean"
+        },
+        "featured": {
+          "type": "boolean"
+        },
+        "bestSeller": {
+          "type": "boolean"
+        },
+        "images": {
+          "type": "array",
+          "description": "Bounded list of up to 8 product image URLs or data URIs"
+        },
+        "keywords": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 500
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "name",
+        "slug",
+        "categoryId",
+        "categoryName",
+        "price",
+        "compareAtPrice",
+        "description",
+        "materials",
+        "size",
+        "stock",
+        "inStock",
+        "customizable",
+        "featured",
+        "bestSeller",
+        "images",
+        "keywords",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "Cart": {
+      "title": "Cart",
+      "description": "Shopping cart metadata for authenticated user",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "itemCount": {
+          "type": "number"
+        },
+        "subtotal": {
+          "type": "number"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["userId", "itemCount", "subtotal", "updatedAt"]
+    },
+    "CartItem": {
+      "title": "CartItem",
+      "description": "Individual product item inside a user cart subcollection",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "productId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "productName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 150
+        },
+        "productImage": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1500
+        },
+        "price": {
+          "type": "number"
+        },
+        "quantity": {
+          "type": "number"
+        },
+        "customText": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 300
+        },
+        "colorPreference": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 200
+        },
+        "specialInstructions": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 1000
+        },
+        "referenceImageData": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 350000
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "userId",
+        "productId",
+        "productName",
+        "productImage",
+        "price",
+        "quantity",
+        "customText",
+        "colorPreference",
+        "specialInstructions",
+        "referenceImageData",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "WishlistItem": {
+      "title": "WishlistItem",
+      "description": "Saved wishlist product for a user",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "productId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "productName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 150
+        },
+        "productImage": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1500
+        },
+        "price": {
+          "type": "number"
+        },
+        "categoryName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["userId", "productId", "productName", "productImage", "price", "categoryName", "createdAt"]
+    },
+    "SavedAddress": {
+      "title": "SavedAddress",
+      "description": "Customer shipping address",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "fullName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "phone": {
+          "type": "string",
+          "minLength": 5,
+          "maxLength": 25
+        },
+        "houseFlat": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 150
+        },
+        "street": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 150
+        },
+        "area": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 150
+        },
+        "city": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "state": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "pinCode": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 20
+        },
+        "country": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 80
+        },
+        "isDefault": {
+          "type": "boolean"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "userId",
+        "fullName",
+        "phone",
+        "houseFlat",
+        "street",
+        "area",
+        "city",
+        "state",
+        "pinCode",
+        "country",
+        "isDefault",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "Order": {
+      "title": "Order",
+      "description": "Customer purchase order with payment and delivery status",
+      "type": "object",
+      "properties": {
+        "orderNumber": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 50
+        },
+        "userId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "customerName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "customerEmail": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 254
+        },
+        "customerPhone": {
+          "type": "string",
+          "minLength": 5,
+          "maxLength": 25
+        },
+        "shippingAddress": {
+          "type": "string",
+          "minLength": 5,
+          "maxLength": 1000
+        },
+        "itemsSummary": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 2000
+        },
+        "subtotal": {
+          "type": "number"
+        },
+        "discountAmount": {
+          "type": "number"
+        },
+        "couponCode": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 40
+        },
+        "shippingCost": {
+          "type": "number"
+        },
+        "totalAmount": {
+          "type": "number"
+        },
+        "paymentMethod": {
+          "type": "string",
+          "enum": ["razorpay", "paypal"],
+          "minLength": 1,
+          "maxLength": 30
+        },
+        "paymentGatewayId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "paymentStatus": {
+          "type": "string",
+          "enum": ["Paid", "Pending", "Failed", "Refunded"],
+          "minLength": 1,
+          "maxLength": 30
+        },
+        "orderStatus": {
+          "type": "string",
+          "enum": [
+            "Order Placed",
+            "Payment Confirmed",
+            "Preparing",
+            "Shipped",
+            "Out for Delivery",
+            "Delivered",
+            "Cancelled"
+          ],
+          "minLength": 1,
+          "maxLength": 40
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "orderNumber",
+        "userId",
+        "customerName",
+        "customerEmail",
+        "customerPhone",
+        "shippingAddress",
+        "itemsSummary",
+        "subtotal",
+        "discountAmount",
+        "couponCode",
+        "shippingCost",
+        "totalAmount",
+        "paymentMethod",
+        "paymentGatewayId",
+        "paymentStatus",
+        "orderStatus",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "OrderItem": {
+      "title": "OrderItem",
+      "description": "Line item belonging to a parent Order subcollection",
+      "type": "object",
+      "properties": {
+        "orderId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "userId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "productId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "productName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 150
+        },
+        "productImage": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1500
+        },
+        "price": {
+          "type": "number"
+        },
+        "quantity": {
+          "type": "number"
+        },
+        "customText": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 300
+        },
+        "colorPreference": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 200
+        },
+        "specialInstructions": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 1000
+        },
+        "referenceImageData": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 350000
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "orderId",
+        "userId",
+        "productId",
+        "productName",
+        "productImage",
+        "price",
+        "quantity",
+        "customText",
+        "colorPreference",
+        "specialInstructions",
+        "referenceImageData",
+        "createdAt"
+      ]
+    },
+    "Review": {
+      "title": "Review",
+      "description": "Customer product review",
+      "type": "object",
+      "properties": {
+        "productId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "productName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 150
+        },
+        "userId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "authorName": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "rating": {
+          "type": "number"
+        },
+        "comment": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 1000
+        },
+        "approved": {
+          "type": "boolean"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "productId",
+        "productName",
+        "userId",
+        "authorName",
+        "rating",
+        "comment",
+        "approved",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "CustomArtRequest": {
+      "title": "CustomArtRequest",
+      "description": "Bespoke custom artwork request submitted by a customer",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "email": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 254
+        },
+        "phone": {
+          "type": "string",
+          "minLength": 5,
+          "maxLength": 25
+        },
+        "productType": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "preferredSize": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "budget": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 80
+        },
+        "description": {
+          "type": "string",
+          "minLength": 5,
+          "maxLength": 2000
+        },
+        "colorPreference": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 200
+        },
+        "referenceImageData": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 350000
+        },
+        "additionalInstructions": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 1000
+        },
+        "status": {
+          "type": "string",
+          "enum": ["New", "In Review", "Quoted", "Accepted", "Completed"],
+          "minLength": 1,
+          "maxLength": 30
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "userId",
+        "name",
+        "email",
+        "phone",
+        "productType",
+        "preferredSize",
+        "budget",
+        "description",
+        "colorPreference",
+        "referenceImageData",
+        "additionalInstructions",
+        "status",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "Coupon": {
+      "title": "Coupon",
+      "description": "Promotional discount code managed by admin",
+      "type": "object",
+      "properties": {
+        "code": {
+          "type": "string",
+          "minLength": 2,
+          "maxLength": 40,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "discountPercent": {
+          "type": "number"
+        },
+        "minOrderAmount": {
+          "type": "number"
+        },
+        "maxDiscount": {
+          "type": "number"
+        },
+        "active": {
+          "type": "boolean"
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "updatedAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": [
+        "code",
+        "discountPercent",
+        "minOrderAmount",
+        "maxDiscount",
+        "active",
+        "createdAt",
+        "updatedAt"
+      ]
+    },
+    "ContactMessage": {
+      "title": "ContactMessage",
+      "description": "Customer inquiry message submitted via contact page",
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 128,
+          "pattern": "^[a-zA-Z0-9_\\-]+$"
+        },
+        "name": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 100
+        },
+        "email": {
+          "type": "string",
+          "minLength": 3,
+          "maxLength": 254
+        },
+        "phone": {
+          "type": "string",
+          "minLength": 0,
+          "maxLength": 25
+        },
+        "subject": {
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 200
+        },
+        "message": {
+          "type": "string",
+          "minLength": 5,
+          "maxLength": 2000
+        },
+        "createdAt": {
+          "type": "string",
+          "format": "date-time"
+        }
+      },
+      "required": ["userId", "name", "email", "phone", "subject", "message", "createdAt"]
+    }
+  },
+  "firestore": {
+    "/admins/{adminId}": {
+      "schema": "AdminRecord",
+      "description": "Trusted admin lookup collection"
+    },
+    "/users/{userId}": {
+      "schema": "UserProfile",
+      "description": "Public-safe user profile documents"
+    },
+    "/users_private/{userId}": {
+      "schema": "UserPrivateInfo",
+      "description": "Isolated PII contact details for users"
+    },
+    "/categories/{categoryId}": {
+      "schema": "Category",
+      "description": "Storefront product categories"
+    },
+    "/products/{productId}": {
+      "schema": "Product",
+      "description": "Storefront handmade product listings"
+    },
+    "/carts/{userId}": {
+      "schema": "Cart",
+      "description": "User shopping cart root document"
+    },
+    "/carts/{userId}/items/{itemId}": {
+      "schema": "CartItem",
+      "description": "Subcollection of cart line items for a user"
+    },
+    "/wishlists/{wishlistId}": {
+      "schema": "WishlistItem",
+      "description": "Customer saved wishlist items"
+    },
+    "/addresses/{addressId}": {
+      "schema": "SavedAddress",
+      "description": "Customer saved shipping addresses"
+    },
+    "/orders/{orderId}": {
+      "schema": "Order",
+      "description": "Customer purchase orders"
+    },
+    "/orders/{orderId}/items/{itemId}": {
+      "schema": "OrderItem",
+      "description": "Subcollection of line items belonging to an order"
+    },
+    "/reviews/{reviewId}": {
+      "schema": "Review",
+      "description": "Customer product reviews"
+    },
+    "/custom_requests/{requestId}": {
+      "schema": "CustomArtRequest",
+      "description": "Bespoke custom artwork requests"
+    },
+    "/coupons/{couponId}": {
+      "schema": "Coupon",
+      "description": "Promotional discount coupons"
+    },
+    "/contact_messages/{messageId}": {
+      "schema": "ContactMessage",
+      "description": "Customer contact inquiries"
+    }
+  }
+}
